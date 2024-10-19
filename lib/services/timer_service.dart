@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 
 class PomodoroTimerService {
   static final PomodoroTimerService _instance = PomodoroTimerService._internal();
@@ -9,6 +10,7 @@ class PomodoroTimerService {
   Timer? _timer;
   bool _isPomodoroRunning = false;
   bool _isBreakRunning = false;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   PomodoroTimerService._internal();
 
@@ -16,6 +18,14 @@ class PomodoroTimerService {
   int get breakTimeRemaining => _breakTimeRemaining;
   bool get isPomodoroRunning => _isPomodoroRunning;
   bool get isBreakRunning => _isBreakRunning;
+
+  // Function to play sound for 10 seconds
+  Future<void> _playEndSound() async {
+    await _audioPlayer.play(AssetSource('bell_sound.mp3')); // Play sound
+    Timer(Duration(seconds: 10), () {
+      _audioPlayer.stop(); // Stop the sound after 10 seconds
+    });
+  }
 
   void startPomodoroTimer(Function updateCallback) {
     if (_timer != null) return; // Prevent multiple timers
@@ -26,6 +36,7 @@ class PomodoroTimerService {
         updateCallback();
       } else {
         stopTimer();
+        _playEndSound(); // Play sound when Pomodoro ends
         startBreakTimer(updateCallback); // Start break timer
       }
     });
@@ -41,6 +52,7 @@ class PomodoroTimerService {
       } else {
         stopTimer(); // Stop the timer when the break is over
         _isBreakRunning = false; // Set break running status to false
+        _playEndSound(); // Play sound when break ends
       }
     });
   }
@@ -51,7 +63,7 @@ class PomodoroTimerService {
 
   void resetTimer() {
     stopTimer();
-    _pomodoroTimeRemaining = 1500; // Reset to 25 minutes
+    _pomodoroTimeRemaining = 60; // Reset to 25 minutes
     _breakTimeRemaining = 300; // Reset to 5 minutes
     _isPomodoroRunning = false;
     _isBreakRunning = false;

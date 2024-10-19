@@ -24,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
               },
               child: CircleAvatar(
                 radius: 60,
-                backgroundImage: AssetImage('images/profile.png'), // Placeholder image
+                backgroundImage: AssetImage('assets/images/profile.png'), // Placeholder image
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: CircleAvatar(
